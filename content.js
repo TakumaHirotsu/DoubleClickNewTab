@@ -15,6 +15,31 @@
   const pressedLink = new WeakMap();   // mousedown で掴んだリンク -> true
   let lastDoubleClickAt = 0;
 
+  // バックグラウンドで開く設定のキャッシュ（デフォルトは前面で開く）
+  let openInBackground = false;
+
+  // 起動時に chrome.storage から設定を読み込む
+  chrome.storage.sync.get(['openInBackground'], (result) => {
+    openInBackground = result.openInBackground === true;
+  });
+
+  // 設定変更をリアルタイムで反映する
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === 'sync' && changes.openInBackground) {
+      openInBackground = changes.openInBackground.newValue === true;
+    }
+  });
+
+  // 設定に応じて新しいタブを開く
+  // バックグラウンド時は background.js 経由で chrome.tabs.create を呼ぶ
+  function openNewTab(href) {
+    if (openInBackground) {
+      chrome.runtime.sendMessage({ action: 'openTab', url: href });
+    } else {
+      window.open(href, '_blank', 'noopener,noreferrer');
+    }
+  }
+
   function log(...args) {
     console.log('[DoubleClickNewTab]', ...args);
   }
@@ -92,7 +117,7 @@
         if (href) {
           try { window.doubleClickNavBlocker?.blockUrl(href, 1500); } catch {}
           kill(e);
-          window.open(href, '_blank', 'noopener,noreferrer');
+          openNewTab(href);
           lastDoubleClickAt = now;
         }
         return false;
@@ -112,7 +137,7 @@
         const href = normalizeUrl(link.getAttribute('href'));
         if (href) {
           try { window.doubleClickNavBlocker?.blockUrl(href, 1500); } catch {}
-          window.open(href, '_blank', 'noopener,noreferrer');
+          openNewTab(href);
           lastDoubleClickAt = now;
         }
         return false;

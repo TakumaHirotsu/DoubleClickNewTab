@@ -1,15 +1,20 @@
 {
   "manifest_version": 3,
   "name": "DoubleClickNewTab",
-  "version": "1.0",
-  "version_name": "1.0",
+  "version": "2.0",
+  "version_name": "2.0",
   "description": "ダブルクリックで新しいタブで開く - シングルクリックは現在のタブ、ダブルクリックは新しいタブでリンクを開きます。SPAサイトや動的コンテンツにも対応し、すべてのウェブサイトで一貫した動作を保証します。",
   "author": "TakumaHirotsu",
   "permissions": [
     "activeTab",
     "scripting",
-    "tabs"
+    "tabs",
+    "storage"
   ],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
   "host_permissions": [
     "<all_urls>"
   ],

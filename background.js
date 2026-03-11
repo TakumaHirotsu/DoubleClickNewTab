@@ -46,6 +46,15 @@ chrome.runtime.onInstalled.addListener(async (details) => {
   }
 });
 
+// content.js からのメッセージを受け取り、バックグラウンドでタブを作成する
+// (content.js は chrome.tabs.create を直接呼べないため、background 経由で行う)
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'openTab') {
+    // active: false にすることでバックグラウンドタブとして開く
+    chrome.tabs.create({ url: message.url, active: false });
+  }
+});
+
 // タブ更新時の処理（SPA対応）
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   // ナビゲーション完了時に再注入

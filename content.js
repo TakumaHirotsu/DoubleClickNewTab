@@ -48,7 +48,9 @@
     const a = el.closest('a[href]');
     if (!a) return null;
     const href = a.getAttribute('href');
-    if (!href || href.startsWith('javascript:') || href === '#' ||
+    // href="#" だけでなく href="#section" のようなハッシュリンクも除外する
+    // (Bootstrap のタブ切り替えなど、ページ内リンクに干渉しないため)
+    if (!href || href.startsWith('javascript:') || href.startsWith('#') ||
         href.startsWith('mailto:') || href.startsWith('tel:')) return null;
     if (a.target === '_blank' || a.target === '_new') return null;
     return a;

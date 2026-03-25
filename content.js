@@ -101,7 +101,8 @@
       // テキスト選択中・フォームは無視
       const sel = window.getSelection();
       if (sel && sel.toString().trim()) return true;
-      if (e.target.closest("input, textarea, select, button, [contenteditable], [role='button']")) return true;
+      // role="tab" も除外する (Twitch等のSPAタブナビゲーションに干渉しないため)
+      if (e.target.closest("input, textarea, select, button, [contenteditable], [role='button'], [role='tab']")) return true;
 
       const link = isValidLink(e.target);
       if (!link) return true;
@@ -157,6 +158,8 @@
 
   // 早い段階でリンケージを握る（SPA対策）
   function handleMouseDown(e) {
+    // role="tab" はSPAのタブナビゲーションに干渉しないよう除外する
+    if (e.target.closest("[role='tab']")) return;
     const link = isValidLink(e.target);
     if (!link) return;
     pressedLink.set(link, true);
@@ -165,6 +168,8 @@
   }
 
   function handlePointerDown(e) {
+    // role="tab" はSPAのタブナビゲーションに干渉しないよう除外する
+    if (e.target.closest("[role='tab']")) return;
     const link = isValidLink(e.target);
     if (!link) return;
     pressedLink.set(link, true);

@@ -46,12 +46,23 @@ chrome.runtime.onInstalled.addListener(async (details) => {
   }
 });
 
-// content.js からのメッセージを受け取り、バックグラウンドでタブを作成する
+// content.js からのメッセージを受け取り、タブを作成する
 // (content.js は chrome.tabs.create を直接呼べないため、background 経由で行う)
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'openTab') {
-    // active: false にすることでバックグラウンドタブとして開く
-    chrome.tabs.create({ url: message.url, active: false });
+    chrome.storage.sync.get(['openNextToCurrent'], (result) => {
+      // openNextToCurrent のデフォルトは true（現在のタブの右隣）
+      const openNextToCurrent = result.openNextToCurrent !== false;
+      const createOptions = {
+        url: message.url,
+        active: message.active !== false,
+      };
+      // 現在のタブの右隣に開く場合は index を指定する
+      if (openNextToCurrent && sender.tab) {
+        createOptions.index = sender.tab.index + 1;
+      }
+      chrome.tabs.create(createOptions);
+    });
   }
 });
 

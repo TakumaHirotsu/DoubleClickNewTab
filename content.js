@@ -30,14 +30,14 @@
     }
   });
 
-  // 設定に応じて新しいタブを開く
-  // バックグラウンド時は background.js 経由で chrome.tabs.create を呼ぶ
+  // 新しいタブを開く（常に background.js 経由で chrome.tabs.create を使う）
+  // window.open では開く位置を制御できないため、background 経由に統一している
   function openNewTab(href) {
-    if (openInBackground) {
-      chrome.runtime.sendMessage({ action: 'openTab', url: href });
-    } else {
-      window.open(href, '_blank', 'noopener,noreferrer');
-    }
+    chrome.runtime.sendMessage({
+      action: 'openTab',
+      url: href,
+      active: !openInBackground,  // バックグラウンド設定が ON なら active: false
+    });
   }
 
   function log(...args) {

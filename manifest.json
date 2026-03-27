@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "DoubleClickNewTab",
-  "version": "2.2",
-  "version_name": "2.2",
+  "version": "2.3",
+  "version_name": "2.3",
   "description": "ダブルクリックで新しいタブで開く - シングルクリックは現在のタブ、ダブルクリックは新しいタブでリンクを開きます。SPAサイトや動的コンテンツにも対応し、すべてのウェブサイトで一貫した動作を保証します。",
   "author": "TakumaHirotsu",
   "permissions": [
